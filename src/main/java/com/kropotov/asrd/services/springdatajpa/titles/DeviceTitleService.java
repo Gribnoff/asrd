@@ -42,4 +42,8 @@ public class DeviceTitleService implements TitleService<DeviceTitle, Long> {
         return deviceTitleRepository.findByTitle(title);
     }
 
+    @Override
+    public void deleteById(Long id) {
+        deviceTitleRepository.deleteById(id);
+    }
 }

@@ -44,4 +44,9 @@ public class SystemTitleService implements TitleService<SystemTitle, Long> {
         topicList.add(topic);
         return (List<SystemTitle>) systemTitleRepository.findAllByTopicsId(topic.getId());
     }
+
+    @Override
+    public void deleteById(Long id) {
+        systemTitleRepository.deleteById(id);
+    }
 }

@@ -8,6 +8,8 @@ import com.kropotov.asrd.repositories.SystemRepository;
 import com.kropotov.asrd.services.CrudService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,18 +24,19 @@ public class SystemService implements CrudService<ControlSystem, Long> {
     private final SystemRepository systemRepository;
     private final ControlSystemToDto controlSystemToDto;
 
-    @Override
     public List<ControlSystem> getAll() {
         log.info("Get all systems");
         return (List<ControlSystem>) (systemRepository.findAll());
     }
 
-    @Override
+    public Page<ControlSystem> getAll(Pageable pageable) {
+        return systemRepository.findAll(pageable);
+    }
+
     public Optional<ControlSystem> getById(Long id) {
         return id == null ? Optional.empty() : systemRepository.findById(id);
     }
 
-    @Override
     public ControlSystem save(ControlSystem system) {
         return systemRepository.save(system);
     }
@@ -45,5 +48,10 @@ public class SystemService implements CrudService<ControlSystem, Long> {
     @Transactional
     public ControlSystemDto getDtoById(Long id) {
         return controlSystemToDto.convert(getById(id).orElse(new ControlSystem()));
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        systemRepository.deleteById(id);
     }
 }
