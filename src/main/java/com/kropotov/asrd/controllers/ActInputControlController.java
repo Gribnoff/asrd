@@ -5,6 +5,8 @@ import com.kropotov.asrd.dto.docs.ActInputControlDto;
 import com.kropotov.asrd.facades.docs.ActInputControlFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,7 +36,7 @@ public class ActInputControlController extends CustomErrorController {
     }
 
     @GetMapping
-    public String displayAll(Model model, Pageable pageable) {
+    public String displayAll(Model model, @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         actFacade.fillPage(model, pageable);
         return "acts/list-acts";
     }

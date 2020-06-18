@@ -35,8 +35,7 @@ public class SystemController {
     private final UserToSimple userToSimple;
 
     @GetMapping
-    public String displaySystems(Model model, Pageable pageable) {
-        pageable = PageValues.getPageableOrDefault(pageable);
+    public String displaySystems(Model model, @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         PageWrapper<ControlSystem> page = new PageWrapper<>(systemService.getAll(pageable.previousOrFirst()), "/systems");
 
         PageValues.addContentToModel(model, page);

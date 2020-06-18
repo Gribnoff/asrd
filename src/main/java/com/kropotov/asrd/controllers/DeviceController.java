@@ -17,6 +17,8 @@ import com.kropotov.asrd.services.springdatajpa.titles.DeviceTitleService;
 import com.kropotov.asrd.services.springdatajpa.titles.TopicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -41,8 +43,7 @@ public class DeviceController {
     private final DtoToDevice dtoToDevice;
 
     @GetMapping
-    public String displayDevices(Model model, Pageable pageable) {
-        pageable = PageValues.getPageableOrDefault(pageable);
+    public String displayDevices(Model model, @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         PageWrapper<Device> page = new PageWrapper<>(deviceService.getAll(pageable.previousOrFirst()), "/devices");
 
         PageValues.addContentToModel(model, page);

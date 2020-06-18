@@ -18,6 +18,8 @@ import com.kropotov.asrd.services.springdatajpa.titles.TopicService;
 import com.kropotov.asrd.services.springdatajpa.titles.company.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,8 +50,7 @@ public class InvoiceController {
     private static final String INVOICE_CREATE_OR_UPDATE_FORM = "invoices/edit-invoice";
 
     @GetMapping
-    public String invoicePage(Model model, Pageable pageable) {
-        pageable = PageValues.getPageableOrDefault(pageable);
+    public String invoicePage(Model model, @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         PageWrapper<Invoice> page = new PageWrapper<>(invoiceService.getAll(pageable.previousOrFirst()), "/invoices");
 
         PageValues.addContentToModel(model, page);

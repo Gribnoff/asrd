@@ -32,7 +32,6 @@ public class ActInputControlFacade {
     }
 
     public void fillPage(Model model, Pageable pageable) {
-        pageable = PageValues.getPageableOrDefault(pageable);
         PageWrapper<ActInputControl> page = new PageWrapper<>(actService.getAll(pageable.previousOrFirst()), "/acts");
         PageValues.addContentToModel(model, page);
     }
