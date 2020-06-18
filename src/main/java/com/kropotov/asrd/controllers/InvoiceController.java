@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.security.Principal;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Controller
@@ -54,7 +55,7 @@ public class InvoiceController {
         PageWrapper<Invoice> page = new PageWrapper<>(invoiceService.getAll(pageable.previousOrFirst()), "/invoices");
 
         PageValues.addContentToModel(model, page);
-        model.addAttribute("topicTitleList", topicService.getAll());
+        model.addAttribute("topicTitleList", topicService.getAll().orElse(new ArrayList<>()));
 
         return "invoices/list-invoices";
     }

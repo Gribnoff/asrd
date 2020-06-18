@@ -25,6 +25,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/devices")
@@ -47,7 +48,7 @@ public class DeviceController {
         PageWrapper<Device> page = new PageWrapper<>(deviceService.getAll(pageable.previousOrFirst()), "/devices");
 
         PageValues.addContentToModel(model, page);
-        model.addAttribute("topicTitleList", topicService.getAll().get());
+        model.addAttribute("topicTitleList", topicService.getAll().orElse(new ArrayList<>()));
 
         return "devices/list-devices";
     }

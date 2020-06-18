@@ -19,6 +19,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 
 
 @Controller
@@ -39,7 +40,7 @@ public class SystemController {
         PageWrapper<ControlSystem> page = new PageWrapper<>(systemService.getAll(pageable.previousOrFirst()), "/systems");
 
         PageValues.addContentToModel(model, page);
-        model.addAttribute("topicTitleList", topicService.getAll().get());
+        model.addAttribute("topicTitleList", topicService.getAll().orElse(new ArrayList<>()));
 
         return "systems/list-systems";
     }
