@@ -38,7 +38,7 @@ public class SystemSpecification {
 	}
 
 	public static Specification<ControlSystem> hasNumberLike(final String number) {
-		return (root, cr, cb) -> cb.like(root.get(ControlSystem_.number), number);
+		return (root, cr, cb) -> cb.like(root.get(ControlSystem_.number), "%" + number + "%");
 	}
 
 	public static Specification<ControlSystem> hasLocation(final byte location) {
@@ -46,11 +46,11 @@ public class SystemSpecification {
 	}
 
 	public static Specification<ControlSystem> hasPurposeLike(final String purpose) {
-		return (root, cr, cb) -> cb.like(root.get(ControlSystem_.purpose), purpose);
+		return (root, cr, cb) -> cb.like(root.get(ControlSystem_.purpose), "%" + purpose + "%");
 	}
 
 	public static Specification<ControlSystem> hasPurposePassportLike(final String purposePassport) {
-		return (root, cr, cb) -> cb.like(root.get(ControlSystem_.purposePassport), purposePassport);
+		return (root, cr, cb) -> cb.like(root.get(ControlSystem_.purposePassport), "%" + purposePassport + "%");
 	}
 
 	public static Specification<ControlSystem> vintageAfter(final LocalDate vintageTo) {
@@ -84,14 +84,16 @@ public class SystemSpecification {
 	public static Specification<ControlSystem> hasTitleLike(final String title) {
 		return (root, cr, cb) -> {
 			Join<ControlSystem, SystemTitle> titleJoin = root.join(ControlSystem_.title, JoinType.LEFT);
-			return cb.equal(titleJoin.get(SystemTitle_.title), title);
+			return cb.like(titleJoin.get(SystemTitle_.title), "%" + title + "%");
 		};
 	}
 
 	public static Specification<ControlSystem> hasUserLike(final String name) {
 		return (root, cr, cb) -> {
 			Join<ControlSystem, User> userJoin = root.join(ControlSystem_.user, JoinType.LEFT);
-			return cb.or(cb.equal(userJoin.get(User_.firstName), name), cb.equal(userJoin.get(User_.lastName), name));
+			return cb.or(cb.like(userJoin.get(User_.firstName), "%" + name + "%"),
+					cb.like(userJoin.get(User_.lastName), "%" + name + "%"),
+					cb.like(userJoin.get(User_.userName), "%" + name + "%"));
 		};
 	}
 }
