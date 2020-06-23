@@ -11,6 +11,7 @@ import com.kropotov.asrd.entities.items.ControlSystem_;
 import com.kropotov.asrd.entities.items.Device;
 import com.kropotov.asrd.entities.items.Device_;
 import com.kropotov.asrd.entities.titles.DeviceTitle;
+import com.kropotov.asrd.entities.titles.DeviceTitle_;
 import com.kropotov.asrd.entities.titles.SystemTitle;
 import com.kropotov.asrd.entities.titles.SystemTitle_;
 import org.springframework.data.jpa.domain.Specification;
@@ -65,22 +66,22 @@ public class InvoiceSpecification {
 
 	public static Specification<Invoice> inDevice(final String device) {
 		return (root, cr, cb) -> {
-			Join<Device, DeviceTitle> systemTitleJoin = root.join(Invoice_.devices, JoinType.LEFT).join(Device_.title, JoinType.LEFT);
-			return cb.like(systemTitleJoin.get(SystemTitle_.title), "%" + device + "%");
+			Join<Device, DeviceTitle> deviceTitleJoin = root.join(Invoice_.devices, JoinType.LEFT).join(Device_.title, JoinType.LEFT);
+			return cb.like(deviceTitleJoin.get(DeviceTitle_.title), "%" + device + "%");
 		};
 	}
 
 	public static Specification<Invoice> fromCompanyLike(final String from) {
 		return (root, cr, cb) -> {
-			Join<Invoice, Company> systemTitleJoin = root.join(Invoice_.from, JoinType.LEFT);
-			return cb.like(systemTitleJoin.get(Company_.title), "%" + from + "%");
+			Join<Invoice, Company> companyJoin = root.join(Invoice_.from, JoinType.LEFT);
+			return cb.like(companyJoin.get(Company_.title), "%" + from + "%");
 		};
 	}
 
 	public static Specification<Invoice> destCompanyLike(final String dest) {
 		return (root, cr, cb) -> {
-			Join<Invoice, Company> systemTitleJoin = root.join(Invoice_.destination, JoinType.LEFT);
-			return cb.like(systemTitleJoin.get(Company_.title), "%" + dest + "%");
+			Join<Invoice, Company> companyJoin = root.join(Invoice_.destination, JoinType.LEFT);
+			return cb.like(companyJoin.get(Company_.title), "%" + dest + "%");
 		};
 	}
 

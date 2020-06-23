@@ -82,8 +82,7 @@ public class InvoiceService implements CrudService<Invoice, Long> {
         if (userName != null && !userName.isEmpty())
             specification = specification.and(hasUserLike(userName));
 
-        Page<Invoice> page = invoiceRepository.findAll(specification, pageable);
-        return page;
+        return invoiceRepository.findAll(specification, pageable);
     }
 
     @Override

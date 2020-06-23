@@ -50,7 +50,7 @@ public class DeviceService implements CrudService<Device, Long> {
         if (entityStatus != null)
             specification = specification.and(hasStatus(entityStatus));
 
-        if (system != null)
+        if (system != null && !system.isEmpty())
             specification = specification.and(inSystem(system));
 
         if (createdAtFrom != null)
@@ -65,16 +65,16 @@ public class DeviceService implements CrudService<Device, Long> {
         if (updatedAtTo != null)
             specification = specification.and(updatedAtBefore(updatedAtTo));
 
-        if (number != null)
+        if (number != null && !number.isEmpty())
             specification = specification.and(hasNumberLike(number));
 
         if (location != null)
             specification = specification.and(hasLocation(location));
 
-        if (purpose != null)
+        if (purpose != null && !purpose.isEmpty())
             specification = specification.and(hasPurposeLike(purpose));
 
-        if (purposePassport != null)
+        if (purposePassport != null && !purposePassport.isEmpty())
             specification = specification.and(hasPurposePassportLike(purposePassport));
 
         if (vintageFrom != null)
@@ -98,11 +98,12 @@ public class DeviceService implements CrudService<Device, Long> {
         if (vpDateTo != null)
             specification = specification.and(vpDateBefore(vpDateTo));
 
-        if (title != null)
+        if (title != null && !title.isEmpty())
             specification = specification.and(hasTitleLike(title));
 
-        if (userName != null)
+        if (userName != null && !userName.isEmpty())
             specification = specification.and(hasUserLike(userName));
+
         return deviceRepository.findAll(specification, pageable);
     }
 
