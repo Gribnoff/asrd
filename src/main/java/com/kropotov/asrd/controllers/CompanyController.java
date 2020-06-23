@@ -1,9 +1,9 @@
 package com.kropotov.asrd.controllers;
 
 import com.kropotov.asrd.dto.company.AddressDto;
+import com.kropotov.asrd.dto.company.CompanyDto;
 import com.kropotov.asrd.dto.company.CompanyPhoneDto;
 import com.kropotov.asrd.dto.company.EmployeeDto;
-import com.kropotov.asrd.entities.company.Company;
 import com.kropotov.asrd.facades.CompanyFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +26,7 @@ public class CompanyController {
 
     @GetMapping("")
     public String showCompanies(Model model, @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
-        model.addAttribute("company",companyFacade.fillPage(model, pageable));
+        model.addAttribute("companies",companyFacade.fillPage(model, pageable));
         return "companies/list-companies";
     }
 
@@ -39,7 +39,7 @@ public class CompanyController {
     // @Valid проверяет в соответствии с аннотациями сущности
     // результаты проверки приходят в BindingResult
     @PostMapping("/{id}/update")
-    public String editCompany(@Valid @ModelAttribute("company") Company company, BindingResult bindingResult, Model model, @PathVariable("id") Long id) {
+    public String editCompany(@Valid @ModelAttribute("company") CompanyDto company, BindingResult bindingResult, Model model, @PathVariable("id") Long id) {
         if (companyFacade.saveOrEditCompany(company, bindingResult, model)) return "companies/edit-company";
         return String.format("redirect:/companies/%s/show", id);
     }
@@ -48,6 +48,18 @@ public class CompanyController {
     public String addCompanyPage(Model model) {
         model.addAttribute("company", companyFacade.addCompany());
         return "companies/add-company";
+    }
+
+    @PostMapping("/create")
+    public String saveCompanyPage(CompanyDto company, BindingResult bindingResult, Model model) {
+        companyFacade.saveOrEditCompany(company, bindingResult,model);
+        return "redirect:/companies/";
+    }
+
+    @GetMapping("/{companyId}/delete")
+    public String deleteCompany(@PathVariable("companyId") Long companyId) {
+        companyFacade.deleteCompany(companyId);
+        return "redirect:/companies/";
     }
 
     @GetMapping("/{companyId}/address/create")
