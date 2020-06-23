@@ -10,11 +10,14 @@ import com.kropotov.asrd.exceptions.StorageException;
 import com.kropotov.asrd.services.ActInputControlService;
 import com.kropotov.asrd.services.StorageService;
 import com.kropotov.asrd.services.UserService;
+import com.kropotov.asrd.services.springdatajpa.docs.ActInputControlSDService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Component
@@ -31,8 +34,14 @@ public class ActInputControlFacade {
         return id == null ? new ActInputControlDto() : actService.getDtoById(id);
     }
 
-    public void fillPage(Model model, Pageable pageable) {
-        PageWrapper<ActInputControl> page = new PageWrapper<>(actService.getAll(pageable.previousOrFirst()), "/acts");
+    public void fillPage(Model model, Byte entityStatus, String system, String device, String invoiceNumber, Byte result,
+                         LocalDateTime createdAtFrom, LocalDateTime createdAtTo, LocalDateTime updatedAtFrom, LocalDateTime updatedAtTo,
+                         String number, LocalDate actDateFrom, LocalDate actDateTo, String userName, Pageable pageable) {
+        PageWrapper<ActInputControl> page = new PageWrapper<>(
+                ((ActInputControlSDService)actService)
+                        .getAll(entityStatus, system, device, invoiceNumber, result,
+                                createdAtFrom, createdAtTo, updatedAtFrom, updatedAtTo,
+                                number, actDateFrom, actDateTo, userName, pageable.previousOrFirst()), "/acts");
         PageValues.addContentToModel(model, page);
     }
 
