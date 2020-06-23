@@ -8,11 +8,16 @@ import com.kropotov.asrd.services.CrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import static com.kropotov.asrd.services.springdatajpa.specification.InvoiceSpecification.*;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +34,56 @@ public class InvoiceService implements CrudService<Invoice, Long> {
     @Override
     public Optional<List<Invoice>> getAll() {
         return Optional.ofNullable(invoiceRepository.findAll());
+    }
+
+    public Page<Invoice> getAll(Byte entityStatus, String system, String device, String companyFrom, String companyDest,
+                                LocalDateTime createdAtFrom, LocalDateTime createdAtTo, LocalDateTime updatedAtFrom, LocalDateTime updatedAtTo,
+                                String number, LocalDate invoiceDateFrom, LocalDate invoiceDateTo, String userName,
+                                Pageable pageable) {
+
+        Specification<Invoice> specification = Specification.where(null);
+
+        if (entityStatus != null)
+            specification = specification.and(hasStatus(entityStatus));
+
+        if (system != null && !system.isEmpty())
+            specification = specification.and(inSystem(system));
+
+        if (device != null && !device.isEmpty())
+            specification = specification.and(inDevice(device));
+
+        if (companyFrom != null && !companyFrom.isEmpty())
+            specification = specification.and(fromCompanyLike(companyFrom));
+
+        if (companyDest != null && !companyDest.isEmpty())
+            specification = specification.and(destCompanyLike(companyDest));
+
+        if (createdAtFrom != null)
+            specification = specification.and(createdAtAfter(createdAtFrom));
+
+        if (createdAtTo != null)
+            specification = specification.and(createdAtBefore(createdAtTo));
+
+        if (updatedAtFrom != null)
+            specification = specification.and(updatedAtAfter(updatedAtFrom));
+
+        if (updatedAtTo != null)
+            specification = specification.and(updatedAtBefore(updatedAtTo));
+
+        if (number != null && !number.isEmpty())
+            specification = specification.and(hasNumberLike(number));
+
+        if (invoiceDateFrom != null)
+            specification = specification.and(invoiceDateAfter(invoiceDateFrom));
+
+        if (invoiceDateTo != null)
+            specification = specification.and(invoiceDateBefore(invoiceDateTo));
+
+        if (userName != null && !userName.isEmpty())
+            specification = specification.and(hasUserLike(userName));
+
+        Page<Invoice> page = invoiceRepository.findAll(specification, pageable);
+        return page;
     }
 
     @Override

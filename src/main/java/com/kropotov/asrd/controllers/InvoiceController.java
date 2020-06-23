@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,6 +30,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -51,8 +54,26 @@ public class InvoiceController {
     private static final String INVOICE_CREATE_OR_UPDATE_FORM = "invoices/edit-invoice";
 
     @GetMapping
-    public String invoicePage(Model model, @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
-        PageWrapper<Invoice> page = new PageWrapper<>(invoiceService.getAll(pageable.previousOrFirst()), "/invoices");
+    public String invoicePage(Model model,
+                              @RequestParam(required = false) Byte entityStatus,
+                              @RequestParam(required = false) String system,
+                              @RequestParam(required = false) String device,
+                              @RequestParam(required = false) String companyFrom,
+                              @RequestParam(required = false) String companyDest,
+                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAtFrom,
+                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAtTo,
+                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime updatedAtFrom,
+                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime updatedAtTo,
+                              @RequestParam(required = false) String number,
+                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate invoiceDateFrom,
+                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate invoiceDateTo,
+                              @RequestParam(required = false) String userName,
+                              @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+        PageWrapper<Invoice> page = new PageWrapper<>(invoiceService.getAll(
+                entityStatus, system, device, companyFrom, companyDest,
+                createdAtFrom, createdAtTo, updatedAtFrom, updatedAtTo,
+                number, invoiceDateFrom, invoiceDateTo, userName,
+                pageable.previousOrFirst()), "/invoices");
 
         PageValues.addContentToModel(model, page);
         model.addAttribute("topicTitleList", topicService.getAll().orElse(new ArrayList<>()));
