@@ -13,86 +13,93 @@
     <h1>Каталог приборов</h1>
     <hr>
 
-    <span th:if="${page.items.size() == 0}" th:text="'Приборов нет'"></span>
+    <div class="row flex-xl-nowrap"
+         th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
 
-    <table th:unless="${page.items.size() == 0}" class="table table-hover">
-        <thead class="thead-dark">
-        <tr>
-            <th>№ п/п</th>
-            <th>
-                Дата изготовления
-                <span th:replace="~{layouts :: sortButtons(vintage)}"></span>
-            </th>
-            <th>
-                Название прибора
-                <span th:replace="~{layouts :: sortButtons(title)}"></span>
-            </th>
-            <th>
-                Номер
-                <span th:replace="~{layouts :: sortButtons(number)}"></span>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="device, i : ${page.content}" th:attr="sys_id=${device.id}"
-            th:onclick="'window.location.href=\'devices/' + ${device.id} + '/show\'; return false'">
-            <td th:text="${(page.number - 1) * page.size + i.count}"/>
-            <td th:text="${device.vintage}"/>
-            <td th:text="${device.title.getTitle()}"/>
-            <td th:text="${device.number}"/>
-        </tr>
-        </tbody>
-    </table>
+        <span class="d-flex justify-content-center" th:if="${page.items.size() == 0}" th:text="'Приборов нет'"></span>
 
-    <div class="d-flex">
-        <form class="mr-auto" th:action="@{/devices/0/update}" method="get">
-            <div class="form-row align-items-center">
-            <div class="col-auto">
-                <label class="sr-only" for="topic-id">Выберите тему</label>
-                <div class="input-group mb-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">
-                            <i class="fa fa-rocket" aria-hidden="true"></i>
+        <div class="col-12 col-md-9 col-xl-10" th:unless="${page.items.size() == 0}">
+            <table class="table table-hover mr-3">
+                <thead class="thead-dark">
+                <tr>
+                    <th>№ п/п</th>
+                    <th>
+                        Дата изготовления
+                        <span th:replace="~{layouts :: sortButtons(vintage)}"></span>
+                    </th>
+                    <th>
+                        Название прибора
+                        <span th:replace="~{layouts :: sortButtons(title)}"></span>
+                    </th>
+                    <th>
+                        Номер
+                        <span th:replace="~{layouts :: sortButtons(number)}"></span>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="device, i : ${page.content}" th:attr="sys_id=${device.id}"
+                    th:onclick="'window.location.href=\'devices/' + ${device.id} + '/show\'; return false'">
+                    <td th:text="${(page.number - 1) * page.size + i.count}"/>
+                    <td th:text="${device.vintage}"/>
+                    <td th:text="${device.title.getTitle()}"/>
+                    <td th:text="${device.number}"/>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="d-flex">
+                <form class="mr-auto" th:action="@{/devices/0/update}" method="get">
+                    <div class="form-row align-items-center">
+                        <div class="col-auto">
+                            <label class="sr-only" for="topic-id">Выберите тему</label>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <i class="fa fa-rocket" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                                <select class="custom-select" id="topic-id" onchange="onChangeTopic(this)">
+                                    <option th:each="t : ${topicTitleList}"
+                                            th:value="${t.id}"
+                                            th:text="${t.title}">
+                                    </option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <select class="custom-select" id="topic-id" onchange="onChangeTopic(this)">
-                        <option th:each="t : ${topicTitleList}"
-                                th:value="${t.id}"
-                                th:text="${t.title}">
-                        </option>
-                    </select>
-                </div>
-            </div>
 
-            <div class="col-auto">
-                <label class="sr-only" for="systemTitle-id">Выберите название системы</label>
-                <div class="input-group mb-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">
-                            <i class="fa fa-rocket" aria-hidden="true"></i>
+                        <div class="col-auto">
+                            <label class="sr-only" for="systemTitle-id">Выберите название системы</label>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <i class="fa fa-rocket" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                                <select class="custom-select" id="systemTitle-id"
+                                        onchange="onChangeSystem(this)"></select>
+                            </div>
                         </div>
-                    </div>
-                    <select class="custom-select" id="systemTitle-id" onchange="onChangeSystem(this)"></select>
-                </div>
-            </div>
 
-            <div class="col-auto device">
-                <label class="sr-only" for="deviceTitle-id">Выберите название прибора</label>
-                <div class="input-group mb-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">
-                            <i class="fa fa-rocket" aria-hidden="true"></i>
+                        <div class="col-auto device">
+                            <label class="sr-only" for="deviceTitle-id">Выберите название прибора</label>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <i class="fa fa-rocket" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                                <select class="custom-select" id="deviceTitle-id" name="deviceTitle"></select>
+                            </div>
                         </div>
+                        <button type="submit" class="btn btn-primary mb-2">Добавить</button>
                     </div>
-                    <select class="custom-select" id="deviceTitle-id" name="deviceTitle"></select>
-                </div>
-            </div>
-            <button type="submit" class="btn btn-primary mb-2">Добавить</button>
-            </div>
-        </form>
+                </form>
 
-        <nav th:replace="layouts :: pagination"></nav>
+                <nav th:replace="layouts :: pagination"></nav>
 
+            </div>
+        </div>
     </div>
 </div>
 <div th:replace="layouts :: footer"></div>

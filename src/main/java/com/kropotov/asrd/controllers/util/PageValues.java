@@ -4,7 +4,7 @@ import com.kropotov.asrd.entities.common.PageableEntity;
 import org.springframework.ui.Model;
 
 public final class PageValues {
-	public static final int[] PAGE_SIZES = {10, 25, 50, 100};
+	public static final int[] PAGE_SIZES = {15, 25, 50, 100};
 
 	private PageValues() {
 	}

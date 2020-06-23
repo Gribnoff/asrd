@@ -85,28 +85,28 @@
 <nav th:fragment="pagination" class="d-inline-flex justify-content-end">
     <ul class="pagination">
         <li th:class="page-item" th:classappend="${page.isFirstPage() ? 'disabled' : ''}">
-            <a th:class="page-link" th:href="@{${page.url}(page = 1, size=${page.size}, sort=${page.sort.toList().get(0).property} + ',' + ${page.sort.toList().get(0).direction})}">
+            <a th:class="page-link" th:href="@{${urlBuilder.replaceQueryParam('page', 1).toUriString().replace('%25', '%').replace('&sort=asc', ',asc').replace('&sort=desc', ',desc')}}">
                 <span aria-hidden="true">&#8810;</span>
             </a>
         </li>
         <li th:class="page-item" th:classappend="${not page.hasPreviousPage() ? 'disabled' : ''}">
-            <a th:class="page-link" th:href="@{${page.url}(page=${page.number - 1}, size=${page.size}, sort=${page.sort.toList().get(0).property} + ',' + ${page.sort.toList().get(0).direction})}">
+            <a th:class="page-link" th:href="@{${urlBuilder.replaceQueryParam('page', page.number - 1).toUriString().replace('%25', '%').replace('&sort=asc', ',asc').replace('&sort=desc', ',desc')}}">
                 <span aria-hidden="true">&lt;</span>
             </a>
         </li>
 
         <li th:each="item : ${page.items}"
             th:class="page-item" th:classappend="${item.current ? 'active' : ''}">
-            <a th:class="page-link" th:text="${item.number}" th:href="@{${page.url}(page=${item.number}, size=${page.size}, sort=${page.sort.toList().get(0).property} + ',' + ${page.sort.toList().get(0).direction})}"></a>
+            <a th:class="page-link" th:text="${item.number}" th:href="@{${urlBuilder.replaceQueryParam('page', item.number).toUriString().replace('%25', '%').replace('&sort=asc', ',asc').replace('&sort=desc', ',desc')}}"></a>
         </li>
 
         <li th:class="page-item" th:classappend="${not page.hasNextPage() ? 'disabled' : ''}">
-            <a th:class="page-link" th:href="@{${page.url}(page=${page.number + 1}, size=${page.size}, sort=${page.sort.toList().get(0).property} + ',' + ${page.sort.toList().get(0).direction})}">
+            <a th:class="page-link" th:href="@{${urlBuilder.replaceQueryParam('page', page.number + 1).toUriString().replace('%25', '%').replace('&sort=asc', ',asc').replace('&sort=desc', ',desc')}}">
                 <span aria-hidden="true">&gt;</span>
             </a>
         </li>
         <li th:class="page-item" th:classappend="${page.isLastPage() ? 'disabled' : ''}">
-            <a th:class="page-link" th:href="@{${page.url}(page=${page.totalPages}, size=${page.size}, sort=${page.sort.toList().get(0).property} + ',' + ${page.sort.toList().get(0).direction})}">
+            <a th:class="page-link" th:href="@{${urlBuilder.replaceQueryParam('page', page.totalPages).toUriString().replace('%25', '%').replace('&sort=asc', ',asc').replace('&sort=desc', ',desc')}}">
                 <span aria-hidden="true">&#8811;</span>
             </a>
         </li>
@@ -115,7 +115,7 @@
     <label for="pageSize" class="ml-3">
         <select id="pageSize" name="pageSize" class="form-control" onchange="location = this.value;">
             <option th:each="size : ${pageSizes}"
-                    th:value="@{${page.url}(page=1, size=${size}, sort=${page.sort.toList().get(0).property} + ',' + ${page.sort.toList().get(0).direction})}"
+                    th:value="${urlBuilder.replaceQueryParam('page', 1).replaceQueryParam('size', size).toUriString().replace('%25', '%').replace('&sort=asc', ',asc').replace('&sort=desc', ',desc')}"
                     th:text="${'По ' + size}"
                     th:selected="${size==page.size}">
             </option>
@@ -125,9 +125,9 @@
 
 <span th:fragment="sortButtons(sortProperty)">
                 <a class="btn btn-sm" th:classappend="${page.sort.toString() == sortProperty + ': ASC' ? 'btn-light disabled' : 'btn-dark'}"
-                   th:href="@{${page.url}(page=1, size=${page.size}, sort=${sortProperty} + ',asc')}">&#8648;</a>
-                <a class="btn btn-sm" th:classappend="${page.sort.toString() == sortProperty + ': DESC' ? 'btn-light disabled' : 'btn-dark'}"
-                   th:href="@{${page.url}(page=1, size=${page.size}, sort=${sortProperty} + ',desc')}">&#8650;</a>
+                   th:href="@{${urlBuilder.replaceQueryParam('page', 1).replaceQueryParam('sort', sortProperty + ',asc').toUriString().replace('%25', '%').replace('&sort=asc', ',asc')}}">&#8648;</a>
+                <a class="btn btn-sm" th:classappend="${page.sort.toList().get(0).toString() == sortProperty + ': DESC' ? 'btn-light disabled' : 'btn-dark'}"
+                   th:href="@{${urlBuilder.replaceQueryParam('page', 1).replaceQueryParam('sort', sortProperty + ',desc').toUriString().replace('%25', '%').replace('&sort=desc', ',desc')}}">&#8650;</a>
 </span>
 
 <div th:fragment="footer">

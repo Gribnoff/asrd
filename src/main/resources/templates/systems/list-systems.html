@@ -8,78 +8,226 @@
 
 <nav th:replace="layouts :: navbar(Systems)"></nav>
 
-<div class="container">
+<div class="container-fluid">
     <br>
     <h1>Каталог систем</h1>
     <hr>
 
-    <span th:if="${page.items.size() == 0}" th:text="'Систем нет'"></span>
-
-    <table th:unless="${page.items.size() == 0}" class="table table-hover">
-        <thead class="thead-dark">
-        <tr>
-            <th>№ п/п</th>
-            <th>
-                Дата изготовления
-                <span th:replace="~{layouts :: sortButtons(vintage)}"></span>
-            </th>
-            <th>
-                Название системы
-                <span th:replace="~{layouts :: sortButtons(title)}"></span>
-            </th>
-            <th>
-                Номер
-                <span th:replace="~{layouts :: sortButtons(number)}"></span>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="system, i : ${page.content}" th:attr="sys_id=${system.id}"
-            th:onclick="'window.location.href=\'systems/' + ${system.id} + '/show\'; return false'">
-            <td th:text="${(page.number - 1) * page.size + i.count}"></td>
-            <td th:text="${#temporals.format(system.vintage, 'dd.MM.yyyy')}"></td>
-            <td th:text="${system.title.getTitle()}"></td>
-            <td th:text="${system.number}"></td>
-        </tr>
-        </tbody>
-    </table>
-    <div class="d-flex">
-        <form class="mr-auto" th:action="@{/systems/0/update}" method="get">
-            <div class="form-row align-items-center">
-                <div class="col-auto">
-                    <label class="sr-only" for="topic-id">Выберите тему</label>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">
-                                <i class="fa fa-rocket" aria-hidden="true"></i>
-                            </div>
+    <div class="row flex-xl-nowrap"
+         th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
+        <div class="col-12 col-lg-4 bd-sidebar">
+            <form class="d-flex flex-column">
+                <div class="d-flex flex-row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="entityStatus">Статус:</label>
+                            <select class="form-control form-control-sm" id="entityStatus" name="entityStatus">
+                                <option th:text="'Не выбрано'" th:value="null"></option>
+                                <option th:each="status : ${T(com.kropotov.asrd.entities.enums.Status).values()}"
+                                        th:value="${status.ordinal()}" th:text="${status.name}"
+                                        th:selected="${#request.getParameter('entityStatus')==status.ordinal().toString()}"></option>
+                            </select>
                         </div>
-                        <select class="custom-select" id="topic-id" onchange="onChangeTopic(this)">
-                            <option th:each="t : ${topicTitleList}"
-                                    th:value="${t.id}"
-                                    th:text="${t.title}">
-                            </option>
-                        </select>
+                        <hr>
+                        <div class="form-group">
+                            <label for="createdAtFrom">Создан после:</label>
+                            <input type="datetime-local" class="form-control form-control-sm"
+                                   id="createdAtFrom" name="createdAtFrom"
+                                   th:value="${#request.getParameter('createdAtFrom')}">
+                        </div>
+                        <div class="form-group">
+                            <label for="createdAtTo">Создан до:</label>
+                            <input type="datetime-local" class="form-control form-control-sm"
+                                   id="createdAtTo" name="createdAtTo"
+                                   th:value="${#request.getParameter('createdAtTo')}">
+                        </div>
+                        <hr>
+
+                        <div class="form-group">
+                            <label for="updatedAtFrom">Изменён после:</label>
+                            <input type="datetime-local" class="form-control form-control-sm"
+                                   id="updatedAtFrom" name="updatedAtFrom"
+                                   th:value="${#request.getParameter('updatedAtFrom')}">
+                        </div>
+                        <div class="form-group">
+                            <label for="updatedAtTo">Изменён до:</label>
+                            <input type="datetime-local" class="form-control form-control-sm"
+                                   id="updatedAtTo" name="updatedAtTo"
+                                   th:value="${#request.getParameter('updatedAtTo')}">
+                        </div>
+                        <hr>
+
+                        <div class="form-group">
+                            <label for="number">Номер:</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   id="number" name="number" th:value="${#request.getParameter('number')}">
+                        </div>
+                        <hr>
+
+                        <div class="form-group">
+                            <label for="location">Локация:</label>
+                            <select class="form-control form-control-sm" id="location" name="location">
+                                <option th:text="'Не выбрано'" th:value="null"></option>
+                                <option th:each="location : ${T(com.kropotov.asrd.entities.enums.Location).values()}"
+                                        th:value="${location.ordinal()}" th:text="${location.title}"
+                                        th:selected="${#request.getParameter('location')==location.ordinal().toString()}"></option>
+                            </select>
+                        </div>
+                        <hr>
+
+                        <div class="form-group">
+                            <label for="purpose">Назначение:</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   id="purpose" name="purpose" th:value="${#request.getParameter('purpose')}">
+                        </div>
+                        <div class="form-group">
+                            <label for="purposePassport">Паспорт:</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   id="purposePassport" name="purposePassport"
+                                   th:value="${#request.getParameter('purposePassport')}">
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="vintageFrom">Изготовлен после:</label>
+                            <input type="date" class="form-control form-control-sm"
+                                   id="vintageFrom" name="vintageFrom"
+                                   th:value="${#request.getParameter('vintageFrom')}">
+                        </div>
+                        <div class="form-group">
+                            <label for="vintageTo">Изготовлен до:</label>
+                            <input type="date" class="form-control form-control-sm"
+                                   id="vintageTo" name="vintageTo"
+                                   th:value="${#request.getParameter('vintageTo')}">
+                        </div>
+                        <hr>
+
+                        <div class="form-group">
+                            <label for="vpNumber">Номер ВП:</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   id="vpNumber" name="vpNumber"
+                                   th:value="${#request.getParameter('vpNumber')}">
+                        </div>
+                        <hr>
+
+                        <div class="form-group">
+                            <label for="otkDateFrom">Дата ОТК после:</label>
+                            <input type="date" class="form-control form-control-sm"
+                                   id="otkDateFrom" name="otkDateFrom"
+                                   th:value="${#request.getParameter('otkDateFrom')}">
+                        </div>
+                        <div class="form-group">
+                            <label for="otkDateTo">Дата ОТК до:</label>
+                            <input type="date" class="form-control form-control-sm"
+                                   id="otkDateTo" name="otkDateTo"
+                                   th:value="${#request.getParameter('otkDateTo')}">
+                        </div>
+                        <hr>
+
+                        <div class="form-group">
+                            <label for="vpDateFrom">Дата ВП после:</label>
+                            <input type="date" class="form-control form-control-sm"
+                                   id="vpDateFrom" name="vpDateFrom"
+                                   th:value="${#request.getParameter('vpDateFrom')}">
+                        </div>
+                        <div class="form-group">
+                            <label for="vpDateTo">Дата ВП до:</label>
+                            <input type="date" class="form-control form-control-sm"
+                                   id="vpDateTo" name="vpDateTo"
+                                   th:value="${#request.getParameter('vpDateTo')}">
+                        </div>
+                        <hr>
+
+                        <div class="form-group">
+                            <label for="title">Название:</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   id="title" name="title" th:value="${#request.getParameter('title')}">
+                        </div>
+                        <hr>
+
+                        <div class="form-group">
+                            <label for="userName">Username:</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   id="userName" name="userName"
+                                   th:value="${#request.getParameter('userName')}">
+                        </div>
                     </div>
                 </div>
+                <button class="btn btn-sm btn-primary" type="submit">применить</button>
+            </form>
+        </div>
 
-                <div class="col-auto">
-                    <label class="sr-only" for="systemTitle-id">Выберите название системы</label>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">
-                                <i class="fa fa-rocket" aria-hidden="true"></i>
+        <div class="d-flex justify-content-center" th:if="${page.items.size() == 0}" th:text="'Систем нет'"></div>
+
+        <div class="col-12 col-lg-8" th:unless="${page.items.size() == 0}">
+            <table class="table table-hover mr-3">
+                <thead class="thead-dark">
+                <tr>
+                    <th>№ п/п</th>
+                    <th>
+                        Дата изготовления
+                        <span th:replace="~{layouts :: sortButtons(vintage)}"></span>
+                    </th>
+                    <th>
+                        Название системы
+                        <span th:replace="~{layouts :: sortButtons(title)}"></span>
+                    </th>
+                    <th>
+                        Номер
+                        <span th:replace="~{layouts :: sortButtons(number)}"></span>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="system, i : ${page.content}" th:attr="sys_id=${system.id}"
+                    th:onclick="'window.location.href=\'systems/' + ${system.id} + '/show\'; return false'">
+                    <td th:text="${(page.number - 1) * page.size + i.count}"></td>
+                    <td th:text="${#temporals.format(system.vintage, 'dd.MM.yyyy')}"></td>
+                    <td th:text="${system.title.getTitle()}"></td>
+                    <td th:text="${system.number}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="d-flex">
+                <form class="mr-auto" th:action="@{/systems/0/update}" method="get">
+                    <div class="form-row align-items-center">
+                        <div class="col-auto">
+                            <label class="sr-only" for="topic-id">Выберите тему</label>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <i class="fa fa-rocket" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                                <select class="custom-select" id="topic-id" onchange="onChangeTopic(this)">
+                                    <option th:each="t : ${topicTitleList}"
+                                            th:value="${t.id}"
+                                            th:text="${t.title}">
+                                    </option>
+                                </select>
                             </div>
                         </div>
-                        <select class="custom-select" id="systemTitle-id" name="systemTitle"></select>
+
+                        <div class="col-auto">
+                            <label class="sr-only" for="systemTitle-id">Выберите название системы</label>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <i class="fa fa-rocket" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                                <select class="custom-select" id="systemTitle-id" name="systemTitle"></select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mb-2">Добавить</button>
                     </div>
-                </div>
-                <button type="submit" class="btn btn-primary mb-2">Добавить</button>
+                </form>
+
+                <nav th:replace="layouts :: pagination"></nav>
             </div>
-        </form>
-
-        <nav th:replace="layouts :: pagination"></nav>
-
+        </div>
     </div>
 </div>
 <div th:replace="layouts :: footer"></div>

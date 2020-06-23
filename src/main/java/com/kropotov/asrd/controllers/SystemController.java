@@ -13,12 +13,17 @@ import com.kropotov.asrd.services.springdatajpa.titles.SystemTitleService;
 import com.kropotov.asrd.services.springdatajpa.titles.TopicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 
@@ -36,8 +41,30 @@ public class SystemController {
     private final UserToSimple userToSimple;
 
     @GetMapping
-    public String displaySystems(Model model, @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
-        PageWrapper<ControlSystem> page = new PageWrapper<>(systemService.getAll(pageable.previousOrFirst()), "/systems");
+    public String displaySystems(Model model,
+                                 @RequestParam(required = false) Byte entityStatus,
+                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAtFrom,
+                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdAtTo,
+                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime updatedAtFrom,
+                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime updatedAtTo,
+                                 @RequestParam(required = false) String number,
+                                 @RequestParam(required = false) Byte location,
+                                 @RequestParam(required = false) String purpose,
+                                 @RequestParam(required = false) String purposePassport,
+                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate vintageFrom,
+                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate vintageTo,
+                                 @RequestParam(required = false) Integer vpNumber,
+                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate otkDateFrom,
+                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate otkDateTo,
+                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate vpDateFrom,
+                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate vpDateTo,
+                                 @RequestParam(required = false) String title,
+                                 @RequestParam(required = false) String userName,
+                                 @PageableDefault(page = 0, size = 15, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+        PageWrapper<ControlSystem> page = new PageWrapper<>(systemService.getAll(
+                entityStatus, createdAtFrom, createdAtTo, updatedAtFrom, updatedAtTo, number, location, purpose, purposePassport,
+                vintageFrom, vintageTo, vpNumber, otkDateFrom, otkDateTo, vpDateFrom, vpDateTo, title, userName,
+                pageable.previousOrFirst()), "/systems");
 
         PageValues.addContentToModel(model, page);
         model.addAttribute("topicTitleList", topicService.getAll().orElse(new ArrayList<>()));
