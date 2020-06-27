@@ -11,84 +11,149 @@
     <br>
     <h1>Каталог предприятий</h1>
     <hr>
-    <div >
+    <div>
         <a th:href="@{companies/create/}"
            class="btn btn-primary btn-sm mb-3" sec:authorize="hasRole('ADMIN')">
             Добавить
         </a>
     </div>
-<!--    <span th:if="${page.items.size() == 0}" th:text="'Компаний нет'"></span>-->
+    <!--    <span th:if="${page.items.size() == 0}" th:text="'Компаний нет'"></span>-->
 
-<!--    <table th:unless="${page.items.size() == 0}" class="table table-hover">-->
-        <table class="table table-hover">
-        <thead class="thead-dark">
-        <tr>
-            <th>№ п/п</th>
-            <th>
-                Название
-<!--                <span th:replace="~{layouts :: sortButtons(title)}"></span>-->
-            </th>
-            <th>Доп. информация</th>
-            <th sec:authorize="hasRole('ADMIN')">Удалить</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="company, iterator : ${companies}" th:attr="sys_id=${company.id}">
-<!--        <tr th:each="company, iterator : ${page.content}" th:attr="sys_id=${company.id}">-->
-<!--            <td th:text="${(page.number - 1) * page.size + iterator.count}"></td>-->
-            <td th:text="${iterator.count}"></td>
-            <td th:text="${company.title}"></td>
-            <td>
-                <a th:href="@{'/companies/' + ${company.id} + '/show'}">"Информация"</a>
-            </td>
-            <td sec:authorize="hasRole('ADMIN')">
-                <button type="button" class="btn btn-danger btn-sm mb-3" data-toggle="modal"
-                        th:attr="data-target='#recordDeleteModalCompany'+${company.id}">Удалить
-                </button>
+    <!--    <table th:unless="${page.items.size() == 0}" class="table table-hover">-->
 
-                <!-- Modal -->
-                <div class="modal fade" th:attr="id='recordDeleteModalCompany'+${company.id}" tabindex="-1" role="dialog"
-                     aria-labelledby="recordDeleteModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="recordDeleteModalCompany">Удаление компании</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                Вы уверены, что хотите удалить эту компанию?
-                                <table class="table table-hover">
-                                    <tbody>
-                                    <tr>
-                                        <th>Название</th>
-                                        <th>Факс</th>
-                                        <th>Email</th>
-                                    </tr>
-                                    <tr>
-                                        <td th:text="${company.title}"></td>
-                                        <td th:text="${company.fax}"></td>
-                                        <td th:text="${company.email}"></td>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Нет</button>
-                                <a href="newRecordForm.html" class="btn btn-primary"
-                                   th:href="@{'/companies/' +${company.id}+'/delete/'}">Да</a>
-                            </div>
+    <div class="row flex-xl-nowrap">
+        <div class="col-12 col-lg-4 bd-sidebar">
+            <form class="d-flex flex-column">
+                <div class="d-flex flex-row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="title">Название:</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   id="title" name="title" th:value="${#request.getParameter('title')}">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">E-mail:</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   id="email" name="email" th:value="${#request.getParameter('email')}">
+                        </div>
+                        <div class="form-group">
+                            <label for="fax">Факс:</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   id="fax" name="fax" th:value="${#request.getParameter('fax')}">
+                        </div>
+                        <div class="form-group">
+                            <label for="militaryRepresentation">Military Representation:</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   id="militaryRepresentation" name="militaryRepresentation" th:value="${#request.getParameter('militaryRepresentation')}">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Телефон:</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   id="phone" name="phone" th:value="${#request.getParameter('phone')}">
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="d-flex justify-content-center">Адрес</div>
+                        <div class="form-group">
+                            <label for="zipCode">Индекс:</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   id="zipCode" name="zipCode" th:value="${#request.getParameter('zipCode')}">
+
+                            <label for="city">Город:</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   id="city" name="city" th:value="${#request.getParameter('city')}">
+
+                            <label for="street">Улица:</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   id="street" name="street" th:value="${#request.getParameter('street')}">
+
+                            <label for=place>Дом:</label>
+                            <input type="text" class="form-control form-control-sm"
+                                   id="place" name="place" th:value="${#request.getParameter('place')}">
                         </div>
                     </div>
                 </div>
-                <!-- Modal end -->
-            </td>
-        </tr>
-        </tbody>
-    </table>
+                <button class="btn btn-sm btn-primary" type="submit">применить</button>
+            </form>
+        </div>
+
+        <span class="d-flex justify-content-center" th:if="${page.items.size() == 0}" th:text="'Приборов нет'"></span>
+
+        <div class="col-12 col-lg-8" th:unless="${page.items.size() == 0}">
+            <table class="table table-hover">
+                <thead class="thead-dark">
+                <tr>
+                    <th>№ п/п</th>
+                    <th>
+                        Название
+                                        <span th:replace="~{layouts :: sortButtons(title)}"></span>
+                    </th>
+                    <th>Доп. информация</th>
+                    <th sec:authorize="hasRole('ADMIN')">Удалить</th>
+                </tr>
+                </thead>
+                <tbody>
+<!--                <tr th:each="company, iterator : ${companies}" th:attr="sys_id=${company.id}">-->
+                            <tr th:each="company, iterator : ${page.content}" th:attr="sys_id=${company.id}">
+                                <td th:text="${(page.number - 1) * page.size + iterator.count}"></td>
+<!--                    <td th:text="${iterator.count}"></td>-->
+                    <td th:text="${company.title}"></td>
+                    <td>
+                        <a th:href="@{'/companies/' + ${company.id} + '/show'}">"Информация"</a>
+                    </td>
+                    <td sec:authorize="hasRole('ADMIN')">
+                        <button type="button" class="btn btn-danger btn-sm mb-3" data-toggle="modal"
+                                th:attr="data-target='#recordDeleteModalCompany'+${company.id}">Удалить
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" th:attr="id='recordDeleteModalCompany'+${company.id}" tabindex="-1"
+                             role="dialog"
+                             aria-labelledby="recordDeleteModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="recordDeleteModalCompany">Удаление компании</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Вы уверены, что хотите удалить эту компанию?
+                                        <table class="table table-hover">
+                                            <tbody>
+                                            <tr>
+                                                <th>Название</th>
+                                                <th>Факс</th>
+                                                <th>Email</th>
+                                            </tr>
+                                            <tr>
+                                                <td th:text="${company.title}"></td>
+                                                <td th:text="${company.fax}"></td>
+                                                <td th:text="${company.email}"></td>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Нет
+                                        </button>
+                                        <a href="newRecordForm.html" class="btn btn-primary"
+                                           th:href="@{'/companies/' +${company.id}+'/delete/'}">Да</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal end -->
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <div class="d-flex justify-content-end">
-<!--        <nav th:replace="layouts :: pagination"></nav>-->
+                <nav th:replace="layouts :: pagination"></nav>
     </div>
 </div>
 <div th:replace="layouts :: footer"></div>

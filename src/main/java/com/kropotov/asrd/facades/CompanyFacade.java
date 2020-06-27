@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,18 +45,17 @@ public class CompanyFacade {
     private List<AddressDto> addressDtos;
     private List<CompanyPhoneDto> companyPhoneDtos;
 
-//    // Тут нужно переделать на dto, Я сделал просто чтобы работало
 //    public List<CompanyDto> fillPage(Model model, Pageable pageable) {
-//        //companyDtos = companyService.getAll().get().stream().map(company -> companyToDto.convert(company)).collect(Collectors.toList());
-//        pageable = PageValues.getPageableOrDefault(pageable);
-//        PageWrapper<Company> page = new PageWrapper<>(companyService.getAll(pageable.previousOrFirst()), "/companies");
-//        PageValues.addContentToModel(model,page);
+//        companyDtos = companyService.getAll().get().stream().map(company -> companyToDto.convert(company)).collect(Collectors.toList());
 //        return companyDtos;
 //    }
 
-    public List<CompanyDto> fillPage(Model model, Pageable pageable) {
-        companyDtos = companyService.getAll().get().stream().map(company -> companyToDto.convert(company)).collect(Collectors.toList());
-        return companyDtos;
+    public void fillPage(Model model, String title, String email, String fax, String militaryRepresentation,
+                                     String phone, String zipCode, String city, String street, String place, Pageable pageable) {
+        PageWrapper<CompanyDto> page = new PageWrapper<>(companyService
+                .getAll(title, email, fax, militaryRepresentation, phone, zipCode, city, street, place, pageable.previousOrFirst()),
+                "/companies");
+        PageValues.addContentToModel(model, page);
     }
 
 

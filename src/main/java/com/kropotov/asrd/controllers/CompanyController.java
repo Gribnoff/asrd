@@ -25,8 +25,20 @@ public class CompanyController {
     private final CompanyFacade companyFacade;
 
     @GetMapping("")
-    public String showCompanies(Model model, @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
-        model.addAttribute("companies",companyFacade.fillPage(model, pageable));
+    public String showCompanies(Model model,
+                                @RequestParam(required = false) String title,
+                                @RequestParam(required = false) String email,
+                                @RequestParam(required = false) String fax,
+                                @RequestParam(required = false) String militaryRepresentation,
+                                @RequestParam(required = false) String phone,
+                                @RequestParam(required = false) String zipCode,
+                                @RequestParam(required = false) String city,
+                                @RequestParam(required = false) String street,
+                                @RequestParam(required = false) String place,
+                                @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+//        model.addAttribute("companies", companyFacade.fillPage(model, title, email, fax, militaryRepresentation,
+//                phone, zipCode, city, street, place, pageable));
+        companyFacade.fillPage(model, title, email, fax, militaryRepresentation, phone, zipCode, city, street, place, pageable);
         return "companies/list-companies";
     }
 
