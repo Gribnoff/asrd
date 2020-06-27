@@ -78,7 +78,8 @@
     </div>
 </nav>
 
-<nav th:fragment="pagination" class="d-inline-flex justify-content-end">
+<nav th:fragment="pagination" class="d-inline-flex justify-content-end"
+     th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
     <ul class="pagination">
         <li th:class="page-item" th:classappend="${page.isFirstPage() ? 'disabled' : ''}">
             <a th:class="page-link" th:href="@{${urlBuilder.replaceQueryParam('page', 1).toUriString().replace('%25', '%').replace('&sort=asc', ',asc').replace('&sort=desc', ',desc')}}">
@@ -119,7 +120,8 @@
     </label>
 </nav>
 
-<span th:fragment="sortButtons(sortProperty)">
+<span th:fragment="sortButtons(sortProperty)"
+      th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
                 <a class="btn btn-sm" th:classappend="${page.sort.toString() == sortProperty + ': ASC' ? 'btn-light disabled' : 'btn-dark'}"
                    th:href="@{${urlBuilder.replaceQueryParam('page', 1).replaceQueryParam('sort', sortProperty + ',asc').toUriString().replace('%25', '%').replace('&sort=asc', ',asc')}}">&#8648;</a>
                 <a class="btn btn-sm" th:classappend="${page.sort.toList().get(0).toString() == sortProperty + ': DESC' ? 'btn-light disabled' : 'btn-dark'}"
