@@ -1,7 +1,5 @@
 package com.kropotov.asrd.controllers;
 
-import com.kropotov.asrd.controllers.util.PageValues;
-import com.kropotov.asrd.controllers.util.PageWrapper;
 import com.kropotov.asrd.converters.UserToSimple;
 import com.kropotov.asrd.converters.items.ControlSystemToDto;
 import com.kropotov.asrd.converters.items.DtoToControlSystem;
@@ -24,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 
 @Controller
@@ -61,13 +58,16 @@ public class SystemController {
                                  @RequestParam(required = false) String title,
                                  @RequestParam(required = false) String userName,
                                  @PageableDefault(page = 0, size = 15, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
-        PageWrapper<ControlSystem> page = new PageWrapper<>(systemService.getAll(
-                entityStatus, createdAtFrom, createdAtTo, updatedAtFrom, updatedAtTo, number, location, purpose, purposePassport,
-                vintageFrom, vintageTo, vpNumber, otkDateFrom, otkDateTo, vpDateFrom, vpDateTo, title, userName,
-                pageable.previousOrFirst()), "/systems");
+//        PageWrapper<ControlSystem> page = new PageWrapper<>(systemService.getAll(
+//                entityStatus, createdAtFrom, createdAtTo, updatedAtFrom, updatedAtTo, number, location, purpose, purposePassport,
+//                vintageFrom, vintageTo, vpNumber, otkDateFrom, otkDateTo, vpDateFrom, vpDateTo, title, userName,
+//                pageable.previousOrFirst()), "/systems");
 
-        PageValues.addContentToModel(model, page);
-        model.addAttribute("topicTitleList", topicService.getAll().orElse(new ArrayList<>()));
+//        PageValues.addContentToModel(model, page);
+//        model.addAttribute("topicTitleList", topicService.getAll().orElse(new ArrayList<>()));
+
+		systemService.generateReport(systemService.getSpecificationFromGivenParams(entityStatus, createdAtFrom, createdAtTo, updatedAtFrom, updatedAtTo, number,
+				location, purpose, purposePassport, vintageFrom, vintageTo, vpNumber, otkDateFrom, otkDateTo, vpDateFrom, vpDateTo, title, userName));
 
         return "systems/list-systems";
     }
