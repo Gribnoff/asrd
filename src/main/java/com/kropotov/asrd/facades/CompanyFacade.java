@@ -22,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -88,6 +89,7 @@ public class CompanyFacade {
     public Company addCompany() {
         return new Company();
     }
+
     public Address addAddress() {
         return new Address();
     }
@@ -108,12 +110,12 @@ public class CompanyFacade {
         Address address = dtoAddressToCompany.convert(addressDto);
         address.setCompany(companyService.getById(companyId).get());
         addressService.save(address);
-        String url = String.format("redirect:/companies/%s/show",companyId);
+        String url = String.format("redirect:/companies/%s/show", companyId);
         return url;
     }
 
     public CompanyPhoneDto getPhoneById(Long id) {
-        return companyPhoneDtos.stream().filter(phoneDto ->phoneDto.getId() == id).findFirst().get();
+        return companyPhoneDtos.stream().filter(phoneDto -> phoneDto.getId() == id).findFirst().get();
     }
 
     public String savePhone(CompanyPhoneDto phoneDto, Long companyId) {
@@ -128,25 +130,26 @@ public class CompanyFacade {
         return employeeService.getById(id).get();
     }
 
-    public String saveEmployee(EmployeeDto employeeDto,Long companyId) {
+    public String saveEmployee(EmployeeDto employeeDto, Long companyId) {
         Employee employee = dtoEmployeeToCompany.convert(employeeDto);
         employee.setCompany(companyService.getById(companyId).get());
         employeeService.save(employee);
         String url = String.format("redirect:/companies/%s/show", companyId);
         return url;
     }
-    
+
     public boolean saveOrEditCompany(CompanyDto company, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("companyCreationError", "BindingResult error!");
             return true;
         }
-        Company existing = companyService.getOneByTitle(company.getTitle());
-        if (existing != null && !existing.getId().equals(company.getId())) {
-            model.addAttribute("company", company);
-            model.addAttribute("companyCreationError", "Компания с таким названием уже существует!");
-            return true;
-        }
+        Optional<Company> existing = companyService.getOneByTitle(company.getTitle());
+        if (checkBindignResult(existing, company)) {
+                model.addAttribute("company", company);
+                model.addAttribute("companyCreationError", "Компания с таким названием уже существует!");
+                return true;
+            }
+
         companyService.save(dtoToCompany.convert(company));
         return false;
     }
@@ -164,7 +167,7 @@ public class CompanyFacade {
         Address address = dtoAddressToCompany.convert(addressDto);
         address.setCompany(companyService.getById(companyId).get());
         addressService.deleteById(address.getId());
-        String url = String.format("redirect:/companies/%s/show",companyId);
+        String url = String.format("redirect:/companies/%s/show", companyId);
         return url;
     }
 
@@ -184,8 +187,24 @@ public class CompanyFacade {
         return url;
     }
 
-    public void deleteCompany(Long companyId) {
-        companyService.deleteById(companyId);
+    public boolean deleteCompany(Long companyId, Model model) {
+        try {
+            companyService.deleteById(companyId);
+        } catch (Exception e) {
+            model.addAttribute("companyDeletingError", "Нельзя удалить компанию, у которой есть документы!");
+            return true;
+        }
+        return false;
+    }
 
+    private boolean checkBindignResult(Optional<Company> existing, CompanyDto companyDto) {
+        if (existing.isPresent() && existing.get().getId().equals(companyDto.getId()) &&
+                existing.get().getEmail().equals(companyDto.getEmail()) &&
+                existing.get().getFax().equals(companyDto.getFax()) &&
+                existing.get().getTitle().equals(companyDto.getTitle()) &&
+                existing.get().getMilitaryRepresentation().equals(companyDto.getMilitaryRepresentation())) {
+            return true;
+        }
+        return false;
     }
 }

@@ -67,8 +67,8 @@ public class CompanyService implements CrudService<Company, Long> {
                 .map(companyToDto::convert);
     }
 
-    public Company getOneByTitle(String title) {
-        return companyRepository.findOneByTitle(title).get();
+    public Optional<Company> getOneByTitle(String title) {
+        return companyRepository.findOneByTitle(title);
     }
 
     @Transactional
